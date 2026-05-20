@@ -12,7 +12,7 @@ func TestParseOpenSearchTemplate_PrefersOPDSProfile(t *testing.T) {
   <Url type="application/atom+xml;profile=opds-catalog" template="https://example.test/opds?q={searchTerms}"/>
 </OpenSearchDescription>`
 
-	tmpl, err := parseOpenSearchTemplate(strings.NewReader(xml))
+	tmpl, err := ParseOpenSearchTemplate(strings.NewReader(xml))
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -28,7 +28,7 @@ func TestParseOpenSearchTemplate_FallbackAtom(t *testing.T) {
   <Url type="application/atom+xml" template="https://example.test/search?q={searchTerms}"/>
 </OpenSearchDescription>`
 
-	tmpl, err := parseOpenSearchTemplate(strings.NewReader(xml))
+	tmpl, err := ParseOpenSearchTemplate(strings.NewReader(xml))
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -45,7 +45,7 @@ func TestParseOpenSearchTemplate_NoSuitable(t *testing.T) {
   <Url type="application/json" template="https://example.test/api?q={searchTerms}"/>
 </OpenSearchDescription>`
 
-	_, err := parseOpenSearchTemplate(strings.NewReader(xml))
+	_, err := ParseOpenSearchTemplate(strings.NewReader(xml))
 	if err == nil {
 		t.Fatalf("expected error, got nil")
 	}
@@ -58,7 +58,7 @@ func TestParseOpenSearchTemplate_EmptyTemplateIgnored(t *testing.T) {
   <Url type="application/atom+xml" template="https://example.test/search?q={searchTerms}"/>
 </OpenSearchDescription>`
 
-	tmpl, err := parseOpenSearchTemplate(strings.NewReader(xml))
+	tmpl, err := ParseOpenSearchTemplate(strings.NewReader(xml))
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -74,7 +74,7 @@ func TestParseOpenSearchTemplate_MalformedXML(t *testing.T) {
 <OpenSearchDescription>
   <Url type="application/atom+xml" template="https://example.test/search?q={searchTerms}"/>`
 
-	_, err := parseOpenSearchTemplate(strings.NewReader(xml))
+	_, err := ParseOpenSearchTemplate(strings.NewReader(xml))
 	if err == nil {
 		t.Fatalf("expected XML parse error, got nil")
 	}
