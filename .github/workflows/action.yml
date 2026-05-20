@@ -30,19 +30,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Login to Docker Hub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
           images: |
-            evanbuss/opds-proxy
             ghcr.io/${{ github.repository }}
           flavor: |
             latest=auto
@@ -66,16 +58,6 @@ jobs:
             VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
             REVISION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.revision'] }}
             BUILDTIME=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
-
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
-        if: github.event_name != 'pull_request'
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          repository: evanbuss/opds-proxy
-          short-description: Access your OPDS library from any eReader
-          enable-url-completion: true # fixes relative image links in README
 
   release:
     name: Github Release
@@ -125,7 +107,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy opds-proxy-demo \
-            --image=evanbuss/opds-proxy:edge \
+            --image=ghcr.io/${{ github.repository }}:edge \
             --platform=managed \
             --region=us-central1 \
             --allow-unauthenticated
