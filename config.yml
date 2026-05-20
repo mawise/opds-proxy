@@ -4,3 +4,5 @@ feeds:
     url: "https://www.gutenberg.org/ebooks/search.opds/"
   - name: "Anarchist Library"
     url: "https://theanarchistlibrary.org/opds"
+    exclude_paths:
+      - "/feeds/opds/all"
