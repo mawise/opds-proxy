@@ -37,10 +37,9 @@ type AuthConfig struct {
 }
 
 type FeedConfig struct {
-	Name         string          `koanf:"name"`
-	Url          string          `koanf:"url"`
-	Auth         *FeedConfigAuth `koanf:"auth"`
-	ExcludePaths []string        `koanf:"exclude_paths"`
+	Name string          `koanf:"name"`
+	Url  string          `koanf:"url"`
+	Auth *FeedConfigAuth `koanf:"auth"`
 }
 
 type FeedConfigAuth struct {

@@ -133,27 +133,7 @@ func (h *FeedHandler) resolveQueryURL(queryURL, searchTerm string) (string, erro
 	return queryURL, nil
 }
 
-func (h *FeedHandler) getFeedConfigByURL(urlStr string) *auth.FeedConfig {
-	reqURL, err := url.Parse(urlStr)
-	if err != nil {
-		return nil
-	}
-
-	for _, feed := range h.feeds {
-		feedURL, err := url.Parse(feed.Url)
-		if err != nil {
-			continue
-		}
-
-		if feedURL.Hostname() == reqURL.Hostname() {
-			return &feed
-		}
-	}
-
-	return nil
-}
-
-func (h *FeedHandler) serveAtom(w http.ResponseWriter, r *http.Request, resp *http.Response, urlStr string, deviceType device.DeviceType) error {
+func (h *FeedHandler) serveAtom(w http.ResponseWriter, r *http.Request, resp *http.Response, url string, deviceType device.DeviceType) error {
 	// Read the body so we can fall back to forwarding it on parse/render errors
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -168,44 +148,6 @@ func (h *FeedHandler) serveAtom(w http.ResponseWriter, r *http.Request, resp *ht
 		resp.Body = io.NopCloser(bytes.NewReader(body))
 		httpx.ForwardResponse(w, resp)
 		return nil
-	}
-
-	feedCfg := h.getFeedConfigByURL(urlStr)
-	if feedCfg != nil && len(feedCfg.ExcludePaths) > 0 {
-		var filteredEntries []opds.Entry
-		for _, entry := range feed.Entries {
-			exclude := false
-			for _, link := range entry.GetLinks() {
-				for _, excludePath := range feedCfg.ExcludePaths {
-					if strings.Contains(strings.ToLower(link.Href), strings.ToLower(excludePath)) {
-						exclude = true
-						break
-					}
-				}
-				if exclude {
-					break
-				}
-			}
-			if !exclude {
-				filteredEntries = append(filteredEntries, entry)
-			}
-		}
-		feed.Entries = filteredEntries
-
-		var filteredLinks []opds.Link
-		for _, link := range feed.Links {
-			exclude := false
-			for _, excludePath := range feedCfg.ExcludePaths {
-				if strings.Contains(strings.ToLower(link.Href), strings.ToLower(excludePath)) {
-					exclude = true
-					break
-				}
-			}
-			if !exclude {
-				filteredLinks = append(filteredLinks, link)
-			}
-		}
-		feed.Links = filteredLinks
 	}
 
 	entryID := r.URL.Query().Get("id")
@@ -223,7 +165,7 @@ func (h *FeedHandler) serveAtom(w http.ResponseWriter, r *http.Request, resp *ht
 		}
 
 		params := view.EntryParams{
-			URL:              urlStr,
+			URL:              url,
 			Feed:             feed,
 			Entry:            entry,
 			DeviceType:       deviceType,
@@ -234,7 +176,7 @@ func (h *FeedHandler) serveAtom(w http.ResponseWriter, r *http.Request, resp *ht
 		return nil
 	}
 
-	params := view.FeedParams{URL: urlStr, Feed: feed}
+	params := view.FeedParams{URL: url, Feed: feed}
 	view.Render(w, func(buf io.Writer) error { return view.Feed(buf, params) })
 	return nil
 }

@@ -98,10 +98,6 @@ feeds:
       # (Optional) Only provide the credentials when request comes from private IP address
       # Requires all `X-Forwarded-For` IPs to be private. Make sure you trust your reverse proxy chain.
       local_only: true
-    # (Optional) Exclude restricted sub-directories that trigger HTTP auth prompts
-    # which can freeze primitive eReader browsers. Case-insensitive substring match.
-    exclude_paths:
-      - "/feeds/opds/all"
   - name: Some Other feed
     url: http://some-other-feed.com/opds
 ```

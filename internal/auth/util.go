@@ -68,8 +68,7 @@ type FeedAuth struct {
 }
 
 type FeedConfig struct {
-	Name         string
-	Url          string
-	Auth         *FeedAuth
-	ExcludePaths []string
+	Name string
+	Url  string
+	Auth *FeedAuth
 }
