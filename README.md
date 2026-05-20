@@ -1,11 +1,15 @@
 # OPDS Proxy
 
+---
+Forked to add exclusion rules so it can work with Standard Ebooks
+---
+
 OPDS Proxy provides a minimal web interface over XML-based OPDS feeds.
 Your eReader likely does not support OPDS, but it does have a rudimentary web browser.
 By running your own OPDS Proxy you can allow eReaders to navigate and download books from your library and any OPDS feed without installing custom eReader software.
 
 <p align="center">
-    <img src="https://github.com/evan-buss/opds-proxy/raw/main/.github/screenshot.png" height="400">
+    <img src="https://github.com/mawise/opds-proxy/raw/main/.github/screenshot.png" height="400">
 </p>
 
 ## Features
@@ -26,13 +30,12 @@ Configuration is done via YAML file (default `config.yml`), environment variable
 
 ### Docker
 
-Docker images are published to [Docker Hub](https://hub.docker.com/r/evanbuss/opds-proxy) and the [GitHub Container Registry](https://github.com/evan-buss/opds-proxy/pkgs/container/opds-proxy).
+Docker images are published to the [GitHub Container Registry](https://github.com/mawise/opds-proxy/pkgs/container/opds-proxy).
 
 ```yaml
 services:
   opds-proxy:
-    image: evanbuss/opds-proxy:latest
-    #image: ghcr.io/evan-buss/opds-proxy:latest
+    image: ghcr.io/mawise/opds-proxy:latest
     container_name: opds-proxy
     # You can also use environment variables to configure the container
     # environment:
@@ -51,7 +54,7 @@ services:
 
 ### Executable
 
-See the [releases](https://github.com/evan-buss/opds-proxy/releases) page for the latest release.
+See the [releases](https://github.com/mawise/opds-proxy/releases) page for the latest release.
 
 > [!NOTE]
 > The docker image includes the required dependencies to convert `.epub` files to device specific formats.
