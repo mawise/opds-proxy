@@ -60,10 +60,25 @@ func (h *FeedHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var customUserAgent string
+	if parsedReqURL, err := url.Parse(resolvedURL); err == nil {
+		for _, feed := range h.feeds {
+			if parsedFeedURL, err := url.Parse(feed.Url); err == nil {
+				if parsedFeedURL.Hostname() == parsedReqURL.Hostname() && feed.UserAgent != "" {
+					customUserAgent = feed.UserAgent
+					break
+				}
+			}
+		}
+	}
+
 	creds := auth.GetCredentials(resolvedURL, r, h.feeds, h.s)
 	resp, err := httpx.Fetch(resolvedURL, 10, func(req *http.Request) {
 		if creds != nil {
 			req.SetBasicAuth(creds.Username, creds.Password)
+		}
+		if customUserAgent != "" {
+			req.Header.Set("User-Agent", customUserAgent)
 		}
 	})
 	if err != nil {
