@@ -33,18 +33,30 @@ func ParseOpenSearchTemplate(r io.Reader) (string, error) {
 		return "", fmt.Errorf("failed to parse OpenSearch description: %w", err)
 	}
 
-	// First pass: look for the OPDS profile type
+	// First pass: look for the OPDS profile type with kind=acquisition
+	for _, u := range d.Urls {
+		if u.Type == "application/atom+xml;profile=opds-catalog;kind=acquisition" && u.Template != "" {
+			return u.Template, nil
+		}
+	}
+	// Second pass: look for the OPDS profile type
 	for _, u := range d.Urls {
 		if u.Type == "application/atom+xml;profile=opds-catalog" && u.Template != "" {
 			return u.Template, nil
 		}
 	}
-	// Second pass: any atom+xml template
+	// Third pass: any atom+xml template
 	for _, u := range d.Urls {
 		if u.Type == "application/atom+xml" && u.Template != "" {
 			return u.Template, nil
 		}
 	}
+	// Fourth pass: any template at all
+	for _, u := range d.Urls {
+		if u.Template != "" {
+			return u.Template, nil
+		}
+	}
 
-	return "", fmt.Errorf("no suitable Atom template found in OSDD")
+	return "", fmt.Errorf("no suitable template found in OSDD")
 }
