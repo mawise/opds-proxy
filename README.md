@@ -2,7 +2,7 @@
 
 Forked to make some changes:
  * More robust OpenSearch parsing for smooth searching on calibre-web feeds
- * More generously accept xml content types instead of just atom+xml for compatibility with Standard Ebooks---
+ * More generously accept xml content types instead of just atom+xml for compatibility with Standard Ebooks
 ---
 
 OPDS Proxy provides a minimal web interface over XML-based OPDS feeds.
